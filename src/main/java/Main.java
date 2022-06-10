@@ -11,8 +11,11 @@ public class Main {
         double yc   = 0;
         double size = 2;
         int numberOfThreads = 5;
-
-        if (args.length == 3) {
+        
+        if (args.length == 1) {
+        	numberOfThreads = Integer.parseInt(args[0]);
+        }
+        else if (args.length == 3) {
             xc   = Double.parseDouble(args[0]);
             yc   = Double.parseDouble(args[1]);
             size = Double.parseDouble(args[2]);
@@ -25,7 +28,7 @@ public class Main {
         }
 
         int n   = 720;   // create n-by-n image
-        int max = 255;   // maximum number of iterations
+        int max = 80;   // maximum number of iterations
         
         System.out.println("Running parallel mandelbrot set with " + numberOfThreads + " threads.");
         
