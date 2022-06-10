@@ -39,15 +39,18 @@ public class CalculateColor implements Runnable {
     }
     
     // checks if a complex number is in the mandelbrot set
-    public int numberInMandelbrotSet(Complex number, int maxIterations) {
+    public float numberInMandelbrotSet(Complex number, int maxIterations) {
     	Complex z = number;
     	for (int t = 0; t < maxIterations; t++) {
-            if (z.abs() > 2.0) {
-                return t;
+    		double fAbs = z.abs();
+            if (fAbs > 2.0) {
+                // based on the final value, add a fractional amount based on
+                // how much it escaped by (fAbs will be in the range of 2 to around 4):                 
+                return (float) ((float)t + (2.0f - (Math.log(fAbs) / Math.log(2.0))));
             }
             z = z.times(z).plus(number);
         }
-    	return maxIterations;
+    	return (float)maxIterations;
     }
     
     public boolean getStop() {
@@ -56,7 +59,9 @@ public class CalculateColor implements Runnable {
     
     @Override
     public void run() {
-    	int result;
+    	float result;
+    	float value;
+    	float hue;
     	
     	for (int i = initial_x; i < initial_x + 80; i++) {			// + 80 is window division, always the same to form a square
     		for (int j = initial_y; j < initial_y + 80; j++) {
@@ -65,9 +70,15 @@ public class CalculateColor implements Runnable {
     			Complex number = new Complex(x, y);
     			
     			result = numberInMandelbrotSet(number, maxIterations);
+                hue = result / (float)maxIterations;
+    			
+    			if (result == maxIterations) {
+    				value = 0.0f;
+    			} else {
+    				value = 1.0f;
+    			}
 
-    	        int gray = maxIterations - result;
-    	        Color color = new Color(gray, gray, gray);
+    			Color color = Color.getHSBColor(hue, 1.0f, value);
     	        picture.set(i, n-1-j, color);						// set color in picture
     		}
     	}
